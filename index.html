@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Price Tag &amp; Pick Lab</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;600;700&display=swap">
+<style>
+:root{--bg:#0d0b0a;--ink:#f1ece3;--mut:#a89f93;--surf:#1a1613;--line:#2e2822;--acc:#ff5a1f;--paper:#ece6da;--palt:#e0d8c8;--pink:#14110e;--pmut:#5c5448;--pline:#c9bfad;--good:#12704d;--bad:#c4331a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f6f2ea;--ink:#14110e;--mut:#5c5448;--surf:#ece6da;--line:#cfc6b6;--paper:#fff;--palt:#f1ece3;color-scheme:light}}
+:root[data-theme="light"]{--bg:#f6f2ea;--ink:#14110e;--mut:#5c5448;--surf:#ece6da;--line:#cfc6b6;--paper:#fff;--palt:#f1ece3;color-scheme:light}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Archivo,system-ui,sans-serif}
+.wrap{max-width:780px;margin:0 auto;padding:30px 18px 60px}
+h1,h2,h3,summary,.cmp strong,.sl b,.cand b{font-family:Anton,Impact,"Arial Narrow",sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.01em}
+h1{font-size:clamp(3rem,13vw,6.4rem);line-height:.92;margin:0}
+h1 span{color:var(--acc)}
+.pour{height:6px;background:var(--acc);margin:14px 0 0;transform-origin:left;animation:pour 1.1s cubic-bezier(.2,.8,.2,1) both}
+@keyframes pour{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.lead{color:var(--mut);max-width:52ch;margin:14px 0 24px;font-size:1.05rem}
+h2{font-size:2rem;line-height:1;margin:0 0 8px}h3{font-size:1.2rem;margin:20px 0 6px}
+#steps{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+#steps span{padding:5px 12px;border-radius:99px;border:1px solid var(--line);font-size:.85rem;color:var(--mut)}
+#steps .on{background:var(--acc);color:#0d0b0a;border-color:var(--acc);font-weight:600}
+#steps .done{color:var(--ink);border-color:var(--ink)}
+.card{background:var(--paper);color:var(--pink);border-radius:6px;padding:24px}
+.sub{color:var(--pmut);margin:0 0 14px}
+.sl{display:grid;grid-template-columns:130px 1fr 60px;gap:10px;align-items:center;margin:12px 0;font-weight:600}
+.sl small{display:block;color:var(--pmut);font-size:.78rem;font-weight:400}
+.sl b{text-align:right;font-size:1.5rem}
+input[type=range]{width:100%;accent-color:var(--acc)}
+.tg{display:flex;gap:10px;align-items:flex-start;margin:10px 0;cursor:pointer}
+.tg input{margin-top:5px;accent-color:var(--acc)}
+.board{margin:18px 0;padding:14px 16px;border-radius:4px;background:var(--palt);border:1px dashed var(--pline)}
+.row{display:grid;grid-template-columns:120px 1fr 44px;gap:10px;align-items:center;margin:7px 0;font-size:.92rem}
+.bar{height:14px;border-radius:2px;background:var(--pline);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--pink);transition:width .25s}
+.row.none .bar i{background:var(--pmut)}.row.dec .bar i{background:var(--acc)}
+.rev{margin:10px 0 0;font-weight:700}
+.btn{margin-top:16px;padding:13px 22px;border:2px solid var(--acc);border-radius:4px;background:var(--acc);color:#0d0b0a;font:700 1rem Archivo,sans-serif;cursor:pointer}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--pink);border:2px solid var(--pink)}
+.btn:focus-visible,.cand:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-top:12px}
+.cand{text-align:left;background:var(--palt);border:2px solid var(--pline);border-radius:4px;padding:14px;color:var(--pink);font:inherit;cursor:pointer}
+.cand.sel{border-color:var(--acc);box-shadow:0 0 0 3px color-mix(in srgb,var(--acc) 30%,transparent)}
+.cand .em{font-size:2rem}.cand b{font-size:1.25rem}
+.cand p{margin:4px 0 0;font-size:.9rem;color:var(--pmut)}
+.cand span{display:flex;justify-content:space-between;font-size:.85rem;border-top:1px solid var(--pline);padding:3px 0}
+.cand span i{font-style:normal;font-weight:700}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.cmp div{padding:14px;border-radius:4px;background:var(--palt)}
+.cmp strong{display:block;font-size:2.6rem;line-height:1.1}
+.tag{display:inline-block;font-size:.78rem;padding:2px 8px;border-radius:3px;background:var(--acc);color:#0d0b0a;font-weight:700}
+.why li{margin:8px 0}
+details{margin-top:14px;border:1px solid var(--line);border-radius:6px;background:var(--surf);padding:4px 18px}
+summary{cursor:pointer;font-size:1.3rem;padding:12px 0}
+details p,details li{color:var(--mut);font-size:.93rem}
+details b{color:var(--ink)}
+.hl{color:var(--bad);font-weight:700}.gd{color:var(--good);font-weight:700}
+@media (max-width:520px){.sl{grid-template-columns:1fr 60px}.sl input{grid-column:1/3;grid-row:2}.cmp{grid-template-columns:1fr}.row{grid-template-columns:96px 1fr 40px}}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}.pour{animation:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Price Tag &amp; <span>Pick</span> Lab</h1>
+<div class="pour" aria-hidden="true"></div>
+<p class="lead">Price the menu. Hire the barista. Survive the 9-to-5. Watch where your brain helps you and where it fools you.</p>
+<nav id="steps" aria-label="Progress"></nav>
+<main id="app"></main>
+
+<details>
+<summary>Theory behind this</summary>
+<ul>
+<li><b>Anchoring:</b> the first or highest number you see colours how you judge the rest. Tversky &amp; Kahneman (1974), <i>Judgment under uncertainty</i>, Science.</li>
+<li><b>Decoy effect:</b> adding a clearly worse option makes a nearby option look better. Huber, Payne &amp; Puto (1982), <i>Journal of Consumer Research</i>.</li>
+<li><b>Loss aversion:</b> losing something hurts more than gaining the same thing feels good. Kahneman &amp; Tversky (1979), <i>Prospect theory</i>, Econometrica.</li>
+<li><b>Halo effect:</b> one standout trait bleeds into ratings of unrelated traits. Thorndike (1920), <i>A constant error in psychological ratings</i>, Journal of Applied Psychology.</li>
+<li><b>Structured selection:</b> consistent, job-related scoring tends to predict performance better than unstructured impressions. Schmidt &amp; Hunter (1998), Psychological Bulletin.</li>
+</ul>
+<p>Authors and years are from memory. Verify titles, journals and page details before citing.</p>
+</details>
+
+<details>
+<summary>Method and limits</summary>
+<ul>
+<li><b>Simulated, not real data.</b> The 100 shoppers are generated with a fixed random seed. Each has made-up values for how much they like coffee and how much price bothers them.</li>
+<li>Anchoring, decoy and loss-framing boosts are <b>illustrative numbers I chose</b>, not effect sizes from research. The page shows direction, not magnitude.</li>
+<li>The six candidates are invented. Their charm and skill scores were written so charm and skill don’t line up. That makes the halo trap visible by design, so it demonstrates the idea rather than proving it.</li>
+<li>No participant data is collected or stored. Everything runs in your browser.</li>
+<li>For a write-up: treat this as a teaching tool and a prototype for a real experiment (for example, randomising menus across real participants).</li>
+</ul>
+</details>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+function rng(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const r=rng(7);
+const SH=[...Array(100)].map(()=>({v:1.5+r()*1.1,w:.7+r()*.7,n:[r()*.8,r()*.8,r()*.8,r()*.8]}));
+const TIERS=[["Basic",4],["Plus",8],["Max",15]];
+const P=[
+{n:"Jordan",e:"😄",v:"Big smile, great stories, firm handshake. Everyone in the room liked them.",ch:9,s:[4,5,4]},
+{n:"Layla",e:"✨",v:"Warm, funny, remembers your name instantly. Dressed sharp.",ch:8,s:[5,4,5]},
+{n:"Marco",e:"😎",v:"Confident and easy to talk to. Strong eye contact.",ch:7,s:[6,5,6]},
+{n:"Nora",e:"🙂",v:"Quiet at first. Answers slowly and carefully.",ch:5,s:[8,7,9]},
+{n:"Aisha",e:"😐",v:"Reserved. Short answers. Didn’t smile much.",ch:4,s:[9,8,8]},
+{n:"Ken",e:"🤓",v:"A bit awkward. Mumbled through the small talk.",ch:3,s:[7,8,8]}
+];
+const CR=["Work sample","Scenario answer","Reference check"];
+const S={step:0,p:[5,9,15],decoy:false,loss:false,gut:[],str:[]};
+const mean=a=>a.reduce((x,y)=>x+y,0)/a.length;
+const sk=i=>mean(P[i].s);
+const avg=(a,f)=>mean(a.map(f));
+
+function sim(fx){
+ const p=S.p,top=Math.max(...p);
+ const opts=[0,1,2].map(i=>({i,c:TIERS[i][1],pr:p[i]}));
+ const dec=fx&&S.decoy;
+ if(dec)opts.push({i:3,c:6,pr:p[1]+.5});
+ const c=[0,0,0,0,0];let rev=0;
+ SH.forEach(s=>{
+  let best=4,bu=0,bp=0;
+  opts.forEach(o=>{
+   let u=s.v*Math.pow(o.c,.7)-s.w*o.pr+s.n[o.i];
+   if(fx){
+    if(o.i==1)u+=Math.min(1.5,.12*(top-o.pr));
+    if(o.i==1&&dec)u+=1.4;
+    if(S.loss&&(o.i==1||o.i==2))u+=.8;
+   }
+   if(u>bu){bu=u;best=o.i;bp=o.pr}
+  });
+  c[best]++;rev+=bp;
+ });
+ return{c,rev};
+}
+
+function steps(){
+ $("#steps").innerHTML=["Menu","Gut hire","Scorecard hire","Why it happened"].map((t,i)=>`<span class="${i==S.step?"on":i<S.step?"done":""}">${i+1}. ${t}</span>`).join("");
+}
+const F=[m0,m1,m2,m3];
+function go(n){S.step=n;steps();F[n]();window.scrollTo(0,0)}
+
+function m0(){
+ $("#app").innerHTML=`<div class="card"><h2>Set your café menu</h2>
+ <p class="sub">Three subscription tiers. 100 simulated shoppers each pick one, or walk away.</p>
+ ${TIERS.map((t,i)=>`<label class="sl"><span>${t[0]}<small>${t[1]} cups a month</small></span><input type="range" min="2" max="30" step="0.5" value="${S.p[i]}" data-i="${i}"><b id="pv${i}">$${S.p[i]}</b></label>`).join("")}
+ <label class="tg"><input type="checkbox" id="dc" ${S.decoy?"checked":""}><span><b>Add a decoy tier.</b> “Plus Lite” gives 6 cups and costs just more than Plus, so Plus clearly beats it.</span></label>
+ <label class="tg"><input type="checkbox" id="ls" ${S.loss?"checked":""}><span><b>Show what Basic members miss.</b> Frames the upgrade as avoiding a loss (no free refills, no extra shots).</span></label>
+ <div class="board" id="res" aria-live="polite"></div>
+ <button class="btn" id="nx">Lock menu and start hiring</button></div>`;
+ document.querySelectorAll("input[type=range]").forEach(e=>e.oninput=()=>{S.p[e.dataset.i]=+e.value;$("#pv"+e.dataset.i).textContent="$"+e.value;draw()});
+ $("#dc").onchange=e=>{S.decoy=e.target.checked;draw()};
+ $("#ls").onchange=e=>{S.loss=e.target.checked;draw()};
+ $("#nx").onclick=()=>go(1);
+ draw();
+}
+function draw(){
+ const R=sim(true);
+ const rows=TIERS.map((t,i)=>[`${t[0]} $${S.p[i]}`,R.c[i],""]);
+ if(S.decoy)rows.splice(2,0,[`Plus Lite $${S.p[1]+.5}`,R.c[3],"dec"]);
+ rows.push(["Walk away",R.c[4],"none"]);
+ $("#res").innerHTML=rows.map(x=>`<div class="row ${x[2]}"><span>${x[0]}</span><div class="bar"><i style="width:${x[1]}%"></i></div><b>${x[1]}%</b></div>`).join("")+`<p class="rev">Simulated revenue: $${R.rev.toFixed(0)} per 100 shoppers <span class="tag">simulated</span></p>`;
+}
+
+function cards(k,mode){
+ return `<div class="grid">${P.map((c,i)=>`<button class="cand ${S[k].includes(i)?"sel":""}" aria-pressed="${S[k].includes(i)}" onclick="pick('${k}',${i})"><div class="em" aria-hidden="true">${c.e}</div><b>${c.n}</b>${mode?CR.map((q,j)=>`<span>${q}<i>${c.s[j]}/10</i></span>`).join(""):`<p>${c.v}</p>`}</button>`).join("")}</div>`;
+}
+function pick(k,i){
+ const a=S[k],x=a.indexOf(i);
+ if(x>-1)a.splice(x,1);else{if(a.length==2)a.shift();a.push(i)}
+ F[S.step]();
+}
+function m1(){
+ $("#app").innerHTML=`<div class="card"><h2>Hire a barista: gut feel</h2>
+ <p class="sub">You have two spots. Based on the interview, pick your top 2. Go with your first impression.</p>
+ ${cards("gut",0)}
+ <button class="btn" ${S.gut.length<2?"disabled":""} onclick="go(2)">Lock gut picks</button></div>`;
+}
+function m2(){
+ $("#app").innerHTML=`<div class="card"><h2>Hire again: scorecard</h2>
+ <p class="sub">Same six people. Now every candidate was scored on the same three job tasks. You can change your mind.</p>
+ ${cards("str",1)}
+ <button class="btn" ${S.str.length<2?"disabled":""} onclick="go(3)">See what happened</button></div>`;
+}
+function m3(){
+ const R=sim(true),B=sim(false);
+ const g=avg(S.gut,sk),s=avg(S.str,sk),gc=avg(S.gut,i=>P[i].ch),sc=avg(S.str,i=>P[i].ch);
+ const best=mean([...P.keys()].sort((a,b)=>sk(b)-sk(a)).slice(0,2).map(sk));
+ const kept=S.gut.filter(i=>S.str.includes(i)).length;
+ const d=R.rev-B.rev;
+ const fx=[];
+ if(Math.max(...S.p)>S.p[1])fx.push(`<li><b>Anchoring.</b> The Max tier at $${Math.max(...S.p)} sits next to Plus, so Plus feels cheaper than it would alone.</li>`);
+ if(S.decoy)fx.push(`<li><b>Decoy effect.</b> Plus Lite is worse than Plus for almost the same price. Few pick it, but it makes Plus look like the obvious choice. Plus share: ${B.c[1]}% without the effects, ${R.c[1]}% with them.</li>`);
+ if(S.loss)fx.push(`<li><b>Loss aversion.</b> Framing Basic as what you lose pushes people toward paid upgrades.</li>`);
+ $("#app").innerHTML=`<div class="card"><h2>Why it happened</h2>
+ <h3>The menu</h3>
+ <div class="cmp"><div>Without psychology effects<strong>$${B.rev.toFixed(0)}</strong>per 100 shoppers</div><div>With your menu<strong>$${R.rev.toFixed(0)}</strong>${d>=0?"+":"-"}$${Math.abs(d).toFixed(0)} vs. baseline</div></div>
+ <ul class="why">${fx.join("")||"<li>You turned off the decoy and loss framing, so only price differences moved shoppers. Try switching them on.</li>"}</ul>
+ <p class="sub">All shopper behaviour here is <span class="tag">simulated</span>. The size of each boost is illustrative.</p>
+ <h3>The hire</h3>
+ <div class="cmp"><div>Gut picks: ${S.gut.map(i=>P[i].n).join(" + ")}<strong class="${g<s?"hl":"gd"}">${g.toFixed(1)}/10</strong>average job skill · charm ${gc.toFixed(1)}</div><div>Scorecard picks: ${S.str.map(i=>P[i].n).join(" + ")}<strong class="${s>=g?"gd":"hl"}">${s.toFixed(1)}/10</strong>average job skill · charm ${sc.toFixed(1)}</div></div>
+ <ul class="why">
+ <li>${g<s?`<b>Halo effect.</b> Charm made some candidates look good at everything. Your gut picks scored ${(s-g).toFixed(1)} points lower on actual job tasks.`:`Your gut and the scorecard landed close together. Real interviews rarely line up that cleanly.`}</li>
+ <li>The best possible pair averages ${best.toFixed(1)}/10. You kept ${kept} of 2 gut picks after seeing the scores.</li>
+ <li><b>Why the scorecard helps.</b> Same questions, same scoring, job-related criteria. It stops one good trait from rating everything. These candidates are <span class="tag">invented</span> and built to show this.</li></ul>
+ <button class="btn ghost" onclick="S.gut=[];S.str=[];go(0)">Run it again</button></div>`;
+}
+go(0);
+</script>
+</body>
+</html>
